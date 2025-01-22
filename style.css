@@ -96,8 +96,7 @@ body {
   #player-choice, #computer-choice {
     font-size: 20px;
     font-weight: bold;
-    color: #e74c3c; /* Red for choices */
-  }
+    color: #e74c3c; /* Red for choices */} 
   
   #game-result {
     font-size: 22px;
