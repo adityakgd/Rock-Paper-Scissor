@@ -63,7 +63,7 @@ body {
     background-color: #27ae60; /* Darker green */
   }
   
-  /* Lottery and Result Text */
+  /* Lottery */
   #lottery {
     font-size: 24px;
     color: #34495e; /* Dark grayish blue */
@@ -74,7 +74,7 @@ body {
     margin-top: 20px;
     font-size: 18px;
     font-weight: bold;
-    color:  #FFCE1B ; /* Darker gray */
+    color:  #FFCE1B ; /* Mustard Yellow */
   }
   
   /* Scoreboard */
