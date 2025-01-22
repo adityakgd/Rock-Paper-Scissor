@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock, Paper, Scissors with Lottery Effect and Rolling</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+      background-color: white;
+      color: black;
+    }
+    h1 {
+      color: black;
+    }
+    .choices, .difficulty {
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid black;
+      border-radius: 5px;
+      background-color: lightgray;
+      color: black;
+    }
+    button:hover {
+      background-color: gray;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #lottery {
+      font-size: 24px;
+      color: black;
+      margin: 20px 0;
+    }
+    #scoreboard {
+      margin-top: 20px;
+      padding: 20px;
+      border: 2px solid black;
+      display: none; /* Hide scoreboard initially */
+      background-color: #f2f2f2;
+      border-radius: 10px;
+      font-size: 24px; /* Increased font size */
+    }
+    .score {
+      font-size: 24px;
+      margin: 5px 0;
+    }
+    .difficulty {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rock, Paper, Scissors</h1>
+  <button onclick="startGame()">Start Game</button>
+
+  <div class="difficulty" id="difficulty-options" style="display:none;">
+    <p>Select Difficulty:</p>
+    <button onclick="setDifficulty('easy')">Easy</button>
+    <button onclick="setDifficulty('medium')">Medium</button>
+    <button onclick="setDifficulty('hard')">Hard</button>
+  </div>
+
+  <div class="choices" id="game-choices" style="display:none;">
+    <p>Choose your move:</p>
+    <button onclick="playGame('rock')">Rock</button>
+    <button onclick="playGame('paper')">Paper</button>
+    <button onclick="playGame('scissors')">Scissors</button>
+  </div>
+
+  <div id="lottery">...</div>
+
+  <div id="scoreboard">
+    <p class="score" id="player-score">Player Score: 0</p>
+    <p class="score" id="computer-score">Computer Score: 0</p>
+  </div>
+
+  <div class="result">
+    <p id="player-choice"></p>
+    <p id="computer-choice"></p>
+    <p id="game-result"></p>
+  </div>
+
+  <!-- Audio element for button click sound -->
+  <audio id="click-sound" src="button-click(chosic.com).mp3"></audio>
+
+  <script>
+    let playerScore = 0;
+    let computerScore = 0;
+    let gameStarted = false;
+    let difficulty = 'easy'; // Default difficulty is easy
+
+    // Play sound function
+    function playClickSound() {
+      const sound = document.getElementById('click-sound');
+      sound.play();
+    }
+
+    function startGame() {
+      playClickSound(); // Play sound on button click
+      gameStarted = true;
+      document.getElementById('difficulty-options').style.display = 'block';
+      document.getElementById('game-choices').style.display = 'none';
+      document.getElementById('lottery').textContent = 'Select Difficulty to start playing!';
+      document.getElementById('scoreboard').style.display = 'none'; // Hide scoreboard initially
+    }
+
+    function setDifficulty(level) {
+      playClickSound(); // Play sound on button click
+      // Reset scores when difficulty changes
+      playerScore = 0;
+      computerScore = 0;
+
+      // Update difficulty
+      difficulty = level;
+      
+      // Hide difficulty options and show game choices
+      document.getElementById('difficulty-options').style.display = 'none';
+      document.getElementById('game-choices').style.display = 'block';
+      document.getElementById('lottery').textContent = '';
+      document.getElementById('player-choice').textContent = '';
+      document.getElementById('computer-choice').textContent = '';
+      document.getElementById('game-result').textContent = '';
+      
+      // Reset scoreboard and show it
+      document.getElementById('player-score').textContent = `Player Score: ${playerScore}`;
+      document.getElementById('computer-score').textContent = `Computer Score: ${computerScore}`;
+      document.getElementById('scoreboard').style.display = 'block'; // Show scoreboard after difficulty is set
+    }
+
+    // Lottery effect for computer's move
+    function lotteryChoice() {
+      const options = ["rock", "paper", "scissors"];
+      const lotteryProbabilities = [0.5, 0.3, 0.2]; // 50% Rock, 30% Paper, 20% Scissors
+
+      const randomNum = Math.random();
+      let cumulativeProb = 0;
+      for (let i = 0; i < lotteryProbabilities.length; i++) {
+        cumulativeProb += lotteryProbabilities[i];
+        if (randomNum < cumulativeProb) {
+          return options[i];
+        }
+      }
+      return options[0]; // Fallback
+    }
+
+    function getComputerChoice() {
+      return lotteryChoice(); // Use lottery-based choice
+    }
+
+    // Rolling effect function for showing computer's choice
+    function rollComputerChoice(callback) {
+      const choices = ["rock", "paper", "scissors"];
+      let i = 0;
+      const rollInterval = setInterval(() => {
+        document.getElementById("computer-choice").textContent = `Computer is choosing: ${choices[i]}`;
+        i = (i + 1) % choices.length;
+      }, 100); // Change every 100ms to simulate rolling
+
+      // Stop after a brief moment (for example, 1 second)
+      setTimeout(() => {
+        clearInterval(rollInterval);
+        const finalChoice = getComputerChoice(); // Final computer choice
+        document.getElementById("computer-choice").textContent = `Computer chose: ${finalChoice}`;
+        callback(finalChoice); // Call callback to finalize the result
+      }, 1000); // After 1 second, stop rolling and choose
+    }
+
+    function playGame(playerChoice) {
+      playClickSound(); // Play sound on button click
+      document.getElementById("player-choice").textContent = `You chose: ${playerChoice}`;
+
+      rollComputerChoice((computerChoice) => {
+        let result = "";
+        if (playerChoice === computerChoice) {
+          result = "It's a tie!";
+        } else if (
+          (playerChoice === "rock" && computerChoice === "scissors") ||
+          (playerChoice === "scissors" && computerChoice === "paper") ||
+          (playerChoice === "paper" && computerChoice === "rock")
+        ) {
+          result = "You win!";
+          playerScore++;
+        } else {
+          result = "You lose!";
+          computerScore++;
+        }
+
+        document.getElementById("game-result").textContent = result;
+        document.getElementById("player-score").textContent = `Player Score: ${playerScore}`;
+        document.getElementById("computer-score").textContent = `Computer Score: ${computerScore}`;
+      });
+    }
+  </script>
+</body>
+</html>
